@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 public final class SportClubContract {
-    //cheking gihub
+    //github checking
 
     public static final  int DATABASE_VERSION = 1;
     public static final  String DATABASE_NAME = "SportClub";
