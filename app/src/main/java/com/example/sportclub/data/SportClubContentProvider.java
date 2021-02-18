@@ -2,6 +2,7 @@ package com.example.sportclub.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -10,6 +11,19 @@ import android.net.Uri;
 public class SportClubContentProvider extends ContentProvider {
 
     SportClubDbHelper dbHelper;
+
+    private static final int MEMBERS = 111;
+    private static final int MEMBER_ID = 222;
+
+    // Creates a UriMatcher object.
+    private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    static {
+
+        uriMatcher.addURI(SportClubContract.AUTHORITY, SportClubContract.PATH_MEMBERS, MEMBERS);
+        uriMatcher.addURI(SportClubContract.AUTHORITY, SportClubContract.PATH_MEMBERS + "/#", MEMBER_ID);
+
+    }
 
     @Override
     public boolean onCreate() {
@@ -46,6 +60,7 @@ public class SportClubContentProvider extends ContentProvider {
     }
 }
 //URI - Unified Resource Identifier
-// content://com.example.sportclub/members
+// content://com.example.sportclub/members code 2
+// content://com.example.sportclub/members/34 code 1
 //URL - Unified Resource Locator
 //http://google.com
