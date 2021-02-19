@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.sportclub.data.SportClubContract.MemberEntry;
@@ -37,7 +38,11 @@ public class SportClubContentProvider extends ContentProvider {
 
 
     @Override
-    public Cursor query(Uri uri,  String[] projection,  String selection,  String[] selectionArgs,  String sortOrder) {
+    //query() - извлечение данных из одной строки таблицы
+    //projection = {"lastname", "gender"}
+    //selection = "_id=?"
+    //selectionArgs = 34
+    public Cursor query(Uri uri,  String[] projection,  String selection,  String[] selectionArgs,  String sortOrder) { //
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor;
 
@@ -57,7 +62,7 @@ public class SportClubContentProvider extends ContentProvider {
                 break;
 
             default:
-                Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
+
                 throw new IllegalArgumentException("Can't query incorrect URI" + uri);
         }
         return cursor;
@@ -67,7 +72,26 @@ public class SportClubContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri,  ContentValues values) {
-        return null;
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int match = uriMatcher.match(uri);
+
+        switch (match) {
+            case MEMBERS:
+                long id = db.insert(MemberEntry.TABLE_NAME, null, values);
+                if (id == -1) {
+                    Log.e("insertMethod", "Insertion of data in the table failed for " + uri);
+                    return null;
+                }
+
+                return ContentUris.withAppendedId(uri, id);
+
+
+            default:
+                throw new IllegalArgumentException("Insertion of data in the table failed for " + uri);
+        }
+
+
     }
 
     @Override

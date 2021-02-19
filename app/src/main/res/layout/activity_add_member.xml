@@ -80,14 +80,14 @@
         android:weightSum="3">
 
         <TextView
-            android:text="Group"
+            android:text="Sport"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
         <EditText
-            android:id="@+id/groupEditText"
-            android:hint="Group"
+            android:id="@+id/sportEditText"
+            android:hint="SPort"
             android:layout_weight="2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
