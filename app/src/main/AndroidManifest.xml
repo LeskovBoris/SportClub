@@ -11,7 +11,7 @@
         android:theme="@style/Theme.SportClub">
         <activity android:name=".AddMemberActivity"></activity>
         <provider
-            android:authorities="package com.example.sportclub;"
+            android:authorities="com.example.sportclub;"
             android:name=".data.SportClubContentProvider"
             android:exported="false"/>
         <activity android:name=".MainActivity">

@@ -65,6 +65,8 @@ public class SportClubContentProvider extends ContentProvider {
 
                 throw new IllegalArgumentException("Can't query incorrect URI" + uri);
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 

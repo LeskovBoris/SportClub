@@ -15,7 +15,7 @@ public final class SportClubContract {
 
 
     public static final Uri BASE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY);
-    public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_MEMBERS);
+
 
     private SportClubContract() {
 

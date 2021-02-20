@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.example.sportclub.data.SportClubContract.MemberEntry;
+import com.example.sportclub.data.SportClubContract.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private void displayData() {
 
         String[] projection = {
-                MemberEntry._ID,
+                MemberEntry.KEY_ID,
                 MemberEntry.KEY_FIRSTNAME,
                 MemberEntry.KEY_LASTNAME,
                 MemberEntry.KEY_GENDER,
