@@ -98,7 +98,28 @@ public class SportClubContentProvider extends ContentProvider {
 
     @Override
     public int delete( Uri uri,  String selection,  String[] selectionArgs) {
-        return 0;
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        int match = uriMatcher.match(uri);
+
+        switch (match) {
+            case MEMBERS:
+                return db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+
+
+            case MEMBER_ID:
+                selection = MemberEntry._ID + "=?"; // выбираем запись по ID
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                return db.delete(MemberEntry.TABLE_NAME,  selection, selectionArgs);
+
+
+
+            default:
+
+                throw new IllegalArgumentException("Can't delete this URI" + uri);
+        }
+
     }
 
     @Override
@@ -121,7 +142,7 @@ public class SportClubContentProvider extends ContentProvider {
 
             default:
 
-                throw new IllegalArgumentException("Can't query incorrect URI" + uri);
+                throw new IllegalArgumentException("Can't update this URI" + uri);
         }
 
 
