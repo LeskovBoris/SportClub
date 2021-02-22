@@ -31,4 +31,6 @@ public class SportClubDbHelper extends SQLiteOpenHelper {
         onCreate(db);
 
     }
+
+
 }
