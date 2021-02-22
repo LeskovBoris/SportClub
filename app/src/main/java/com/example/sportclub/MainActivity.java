@@ -82,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
                     currentFirstName + " " +
                     currentLastName + " " +
                     currentGender + " " +
-                    currentSport);
-
-            cursor.close();
+                    currentSport
+            );
 
         }
+        cursor.close();
     }
 }

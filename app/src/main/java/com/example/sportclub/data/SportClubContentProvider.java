@@ -66,7 +66,7 @@ public class SportClubContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Can't query incorrect URI" + uri);
         }
 
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        //cursor.setNotificationUri(getContext().getContentResolver(), uri);
         return cursor;
     }
 
@@ -103,7 +103,28 @@ public class SportClubContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri,  ContentValues values,  String selection,  String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        int match = uriMatcher.match(uri);
+
+        switch (match) {
+            case MEMBERS:
+                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+
+
+            case MEMBER_ID:
+                selection = MemberEntry._ID + "=?"; // выбираем запись по ID
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+
+
+
+            default:
+
+                throw new IllegalArgumentException("Can't query incorrect URI" + uri);
+        }
+
+
     }
 
     @Override
