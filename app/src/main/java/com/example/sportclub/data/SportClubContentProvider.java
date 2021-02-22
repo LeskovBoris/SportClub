@@ -137,12 +137,13 @@ public class SportClubContentProvider extends ContentProvider {
                 selection = MemberEntry._ID + "=?"; // выбираем запись по ID
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted =  db.delete(MemberEntry.TABLE_NAME,  selection, selectionArgs);
+                break;
 
 
 
             default:
 
-                throw new IllegalArgumentException("Can't delete this URI" + uri);
+                throw new IllegalArgumentException("Can't delete this URI " + uri);
         }
 
         if (rowsDeleted != 0) {

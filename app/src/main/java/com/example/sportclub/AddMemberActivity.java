@@ -2,6 +2,7 @@ package com.example.sportclub;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.loader.app.LoaderManager;
@@ -10,6 +11,7 @@ import androidx.loader.content.Loader;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -53,6 +55,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
                 saveMember();
                 return  true;
             case R.id.delete_member:
+                showDeleteMemberDialog();
             return true;
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -228,5 +231,40 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 
+    }
+
+    private void showDeleteMemberDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Do you want delete the member?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteMember();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void deleteMember() {
+        if (currentMemberUri != null) {
+            int rowsDeleted = getContentResolver().delete(currentMemberUri, null, null);
+
+            if (rowsDeleted == 0) {
+                Toast.makeText(this, "Deleting of member failed", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this, "Member is deleted", Toast.LENGTH_LONG).show();
+        }
+        finish();
     }
 }
