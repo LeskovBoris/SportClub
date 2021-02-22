@@ -75,6 +75,27 @@ public class SportClubContentProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri,  ContentValues values) {
 
+        String firstName = values.getAsString(MemberEntry.KEY_FIRSTNAME);
+        if (firstName == null) {
+            throw new IllegalArgumentException("You have to input first name");
+        }
+
+        String lastName = values.getAsString(MemberEntry.KEY_LASTNAME);
+        if (lastName == null) {
+            throw new IllegalArgumentException("You have to input last name");
+        }
+
+        Integer gender = values.getAsInteger(MemberEntry.KEY_GENDER);
+        if(gender == null || !(gender == MemberEntry.GENDER_UNKNOWN || gender == MemberEntry.GENDER_MALE
+        || gender == MemberEntry.GENDER_FEMALE)) {
+            throw new IllegalArgumentException("You have to input gender");
+        }
+
+        String sport = values.getAsString(MemberEntry.KEY_SPORT);
+        if (sport == null) {
+            throw new IllegalArgumentException("You have to input sport");
+        }
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int match = uriMatcher.match(uri);
 
@@ -124,6 +145,37 @@ public class SportClubContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri,  ContentValues values,  String selection,  String[] selectionArgs) {
+
+        if(values.containsKey(MemberEntry.KEY_FIRSTNAME)) {
+            String firstName = values.getAsString(MemberEntry.KEY_FIRSTNAME);
+            if (firstName == null) {
+                throw new IllegalArgumentException("You have to input first name");
+            }
+        }
+
+        if(values.containsKey(MemberEntry.KEY_LASTNAME)) {
+            String lastName = values.getAsString(MemberEntry.KEY_LASTNAME);
+            if (lastName == null) {
+                throw new IllegalArgumentException("You have to input last name");
+            }
+        }
+
+        if(values.containsKey(MemberEntry.KEY_GENDER)) {
+            Integer gender = values.getAsInteger(MemberEntry.KEY_GENDER);
+            if(gender == null || !(gender == MemberEntry.GENDER_UNKNOWN || gender == MemberEntry.GENDER_MALE
+                    || gender == MemberEntry.GENDER_FEMALE)) {
+                throw new IllegalArgumentException("You have to input gender");
+            }
+        }
+
+        if(values.containsKey(MemberEntry.KEY_SPORT)) {
+            String sport = values.getAsString(MemberEntry.KEY_SPORT);
+            if (sport == null) {
+                throw new IllegalArgumentException("You have to input sport");
+            }
+        }
+
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         int match = uriMatcher.match(uri);
