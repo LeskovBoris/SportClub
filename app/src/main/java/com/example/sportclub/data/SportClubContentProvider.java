@@ -107,6 +107,8 @@ public class SportClubContentProvider extends ContentProvider {
                     return null;
                 }
 
+                getContext().getContentResolver().notifyChange(uri, null);
+
                 return ContentUris.withAppendedId(uri, id);
 
 
@@ -123,16 +125,18 @@ public class SportClubContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         int match = uriMatcher.match(uri);
+        int rowsDeleted;
 
         switch (match) {
             case MEMBERS:
-                return db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted =  db.delete(MemberEntry.TABLE_NAME, selection, selectionArgs);
+                break;
 
 
             case MEMBER_ID:
                 selection = MemberEntry._ID + "=?"; // выбираем запись по ID
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(MemberEntry.TABLE_NAME,  selection, selectionArgs);
+                rowsDeleted =  db.delete(MemberEntry.TABLE_NAME,  selection, selectionArgs);
 
 
 
@@ -140,6 +144,11 @@ public class SportClubContentProvider extends ContentProvider {
 
                 throw new IllegalArgumentException("Can't delete this URI" + uri);
         }
+
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDeleted;
 
     }
 
@@ -179,16 +188,23 @@ public class SportClubContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         int match = uriMatcher.match(uri);
+        int rowsUpdated;
 
         switch (match) {
             case MEMBERS:
-                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated =  db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+
+
+                break;
 
 
             case MEMBER_ID:
                 selection = MemberEntry._ID + "=?"; // выбираем запись по ID
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated =  db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+
+
+                break;
 
 
 
@@ -196,6 +212,11 @@ public class SportClubContentProvider extends ContentProvider {
 
                 throw new IllegalArgumentException("Can't update this URI" + uri);
         }
+
+        if(rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
 
 
     }
