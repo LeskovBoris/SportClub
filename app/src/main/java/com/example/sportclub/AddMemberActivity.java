@@ -1,11 +1,17 @@
 package com.example.sportclub;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,7 +28,8 @@ import com.example.sportclub.data.SportClubContract.MemberEntry;
 
 import java.util.ArrayList;
 
-public class AddMemberActivity extends AppCompatActivity {
+public class AddMemberActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int EDIT_MEMBER_LOADER = 333;
 
     private EditText firstNameEditText;
     private EditText lastNameEditText;
@@ -30,6 +37,7 @@ public class AddMemberActivity extends AppCompatActivity {
     private Spinner genderSpinner;
     private int gender = 0;
     private ArrayAdapter spinnerAdapter;
+    Uri currentMemberUri;
 
 
     @Override
@@ -42,7 +50,7 @@ public class AddMemberActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.save_member:
-                insertMember();
+                saveMember();
                 return  true;
             case R.id.delete_member:
             return true;
@@ -53,7 +61,7 @@ public class AddMemberActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void insertMember() {
+    private void saveMember() {
 
         String firstName = firstNameEditText.getText().toString().trim();
         String lastName = lastNameEditText.getText().toString().trim();
@@ -65,21 +73,45 @@ public class AddMemberActivity extends AppCompatActivity {
         contentValues.put(MemberEntry.KEY_SPORT, sport);
         contentValues.put(MemberEntry.KEY_GENDER, gender);
 
-        ContentResolver contentResolver = getContentResolver();
-        Uri uri = contentResolver.insert(MemberEntry.CONTENT_URI, contentValues);
+        if(currentMemberUri == null) {
+            ContentResolver contentResolver = getContentResolver();
+            Uri uri = contentResolver.insert(MemberEntry.CONTENT_URI, contentValues);
 
-        if (uri == null) {
+            if (uri == null) {
 
-            Toast.makeText(this, "Insertion of data of the table failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Insertion of data of the table failed", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Data saved", Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(this, "Data saved", Toast.LENGTH_LONG).show();
+            int rowsChanged = getContentResolver().update(currentMemberUri, contentValues, null, null);
+
+            if (rowsChanged == 0) {
+                Toast.makeText(this, "Saving of data of the table failed", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Member's data updated", Toast.LENGTH_LONG).show();
+            }
+
         }
+
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_member);
+
+        //Запуск intent
+        Intent intent = getIntent();
+
+        currentMemberUri = intent.getData();
+
+        if(currentMemberUri == null) {
+            setTitle("Add a Member");
+        } else {
+            setTitle("Edit the Member");
+        }
 
         firstNameEditText = findViewById(R.id.firstNameEditText);
         lastNameEditText = findViewById(R.id.lastNameEditText);
@@ -115,11 +147,70 @@ public class AddMemberActivity extends AppCompatActivity {
             }
         });
 
+        getSupportLoaderManager().initLoader(EDIT_MEMBER_LOADER, null, this);
 
 
 
 
 
+
+
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+
+        String[] projection = {
+                MemberEntry._ID,
+                MemberEntry.KEY_FIRSTNAME,
+                MemberEntry.KEY_LASTNAME,
+                MemberEntry.KEY_GENDER,
+                MemberEntry.KEY_SPORT
+        };
+
+
+        return new CursorLoader(this,
+                currentMemberUri, null, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+
+        if(cursor.moveToFirst()) {
+            int firstNameColumnIndex = cursor.getColumnIndex(MemberEntry.KEY_FIRSTNAME);
+            int lastNameColumnIndex = cursor.getColumnIndex(MemberEntry.KEY_LASTNAME);
+            int genderColumnIndex = cursor.getColumnIndex(MemberEntry.KEY_GENDER);
+            int sportColumnIndex = cursor.getColumnIndex(MemberEntry.KEY_SPORT);
+
+            String firstName = cursor.getString(firstNameColumnIndex);
+            String lastName = cursor.getString(lastNameColumnIndex);
+            int gender = cursor.getInt(genderColumnIndex);
+            String sport = cursor.getString(sportColumnIndex);
+
+            firstNameEditText.setText(firstName);
+            lastNameEditText.setText(lastName);
+            sportEditText.setText(sport);
+
+            switch (gender) {
+                case MemberEntry.GENDER_MALE:
+                    genderSpinner.setSelection(1);
+                    break;
+                case MemberEntry.GENDER_FEMALE:
+                    genderSpinner.setSelection(2);
+                    break;
+                case MemberEntry.GENDER_UNKNOWN:
+                    genderSpinner.setSelection(0);
+            }
+
+
+
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 
     }
 }

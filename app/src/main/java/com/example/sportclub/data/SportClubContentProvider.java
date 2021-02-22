@@ -203,10 +203,7 @@ public class SportClubContentProvider extends ContentProvider {
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
                 rowsUpdated =  db.update(MemberEntry.TABLE_NAME, values, selection, selectionArgs);
 
-
                 break;
-
-
 
             default:
 
